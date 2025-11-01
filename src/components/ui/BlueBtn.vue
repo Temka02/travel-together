@@ -12,8 +12,7 @@ export default {
 
 <style>
 .blue-btn{
-    box-sizing: border-box;
-    background-image: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    background: var(--gradient-primary);
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -23,6 +22,7 @@ export default {
     text-decoration: none;
     display: inline-block;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow);
 }
 
 .blue-btn:hover {

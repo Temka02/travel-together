@@ -26,15 +26,13 @@ export default {
 
 <style>
 .logo{
-    color: #2563eb;
+    color: var(--primary);
     text-decoration: none;
-    font-size: 1.8rem;
-    font-weight: 900;
-    line-height: 1.6;
+    font-size: 1.75rem;
+    font-weight: 800;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    letter-spacing: 0.05rem;
 
 }
 .logo::before{
@@ -44,12 +42,12 @@ export default {
 .nav-panel{
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border);
     padding: 1rem 0;
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
 }
 .nav-content{
     max-width: 1200px;

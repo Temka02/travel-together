@@ -24,7 +24,7 @@ const routes = [
   {
     path: '/AllTrips',
     name: 'AllTrips',
-    component: 'AllTrips'
+    component: AllTrips
   },
   {
     path: '/health',

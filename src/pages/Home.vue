@@ -5,22 +5,22 @@
     </section>
     <section class="search-section">
         <div class="search-header">
-            <h2>Найдите свое путешествие</h2>
-            <button type="button" @click="showModal = true" class="filters">Фильтры</button>
+            <h2>Найдите своё путешествие</h2>
+            <button type="button" @click="showModal = true" class="filtersButton">Фильтры</button>
             <div v-if="showModal" class="modal-filters">
                 <button type="button" @click="showModal = false">Закрыть</button>
             </div>
         </div>
-        <div class="search-panel">
-            <div class="travel-direction">
+        <form class="search-panel" @submit.prevent="handleSearch">
+            <div class="search-item">
                 <label for="direction">Куда хотите поехать?</label>
                 <input type="text" id="direction" placeholder="Например, Кавказ или Байкал" >
             </div>
-            <div class="travel-date">
+            <div class="search-item">
                 <label for="date">Дата начала</label>
                 <input type="date" id="date">
             </div>
-            <div class="travel-budget">
+            <div class="search-item">
                 <label for="budget">Бюджет</label>
                 <select>
                     <option checked>Любой бюджет</option>
@@ -29,56 +29,31 @@
                     <option value="high">От 50 000₽</option>
                 </select>
             </div>
-            <button type="button" @click="search()">Найти</button>
-        </div>
+            <BlueBtn type="submit" @click="handleSearch">Найти</BlueBtn>
+        </form>
     </section>
     <section class="popular-trips-section">
         <div class="popular-trips-header">
             <h2>Популярные путешествия</h2>
-            <router-link to="/allTrips" class="link">Все путешествия</router-link>
+            <router-link to="/allTrips" class="link">
+                <span>Все путешествия</span>
+                <span>→</span>
+            </router-link>
         </div>
-        <div v-for="trip in mostPopularTrips" :key="trip.id" class="popular-trips-main">
-            <div class="trip-card">
-                <router-link :to="`/trips/${trip.id}`" class="cardLink">
-                    <div class="trip-badge">Популярное</div>
-                    <div class="trip-image">
-                        <img src="../assets/baikal.jpg" alt="" class="imgOfTravel">
-                    </div>
-                    <div class="trip-content">
-                        <div class="trip-header">
-                            <h3>{{ trip.travelName }}</h3>
-                            <div class="trip-price">{{ trip.travelPrice }}₽</div>
-                        </div>
-                        <div class="trip-main">
-                            <span class="trip-main-item">{{ trip.travelDirection }}</span>
-                            <span class="trip-main-item">{{ trip.travelDate }}</span>
-                            <span class="trip-main-item">{{ trip.travelDuration }}</span>
-                        </div>
-                        <span class="trip-description">{{ trip.travelDescription }}</span>
-                        <div class="trip-footer">
-                            <div class="trip-participants">
-                                <div class="avatar-group">
-                                    <div v-for="participant in trip.travelParticipants" class="avatar">
-                                        {{ participant.name[0] }}
-                                    </div>
-                                </div>
-                                
-                                <span>{{ trip.travelCurrentParticipants }}/{{ trip.travelMaxParticipants }} участников</span>
-                            </div>
-                            <div class="trip-stats">
-                                <span>{{ trip.travelStats }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </router-link>
-            </div>
+        <div class="popular-trips-main">
+            <TripCard
+            v-for="trip in mostPopularTrips"
+            :key="trip.tripID"
+            :trip="trip"
+            />
         </div>
         
     </section>
 </template>
 
 <script>
-
+import BlueBtn from '@/components/ui/BlueBtn.vue';
+import TripCard from '@/components/ui/TripCard.vue'
 export default {
     name: 'Home',
     data(){
@@ -91,8 +66,8 @@ export default {
                     travelDate: "15-22 июля 2024",
                     travelDuration: 1,
                     travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    tavelpCurrentParticipants: 3,
-                    tavelpMaxParticipants: 6,
+                    travelCurrentParticipants: 3,
+                    travelMaxParticipants: 6,
                     travelParticipants: [
                         {
                             name: "Андрей"
@@ -317,6 +292,15 @@ export default {
                 }
             ]
         }
+    },
+    methods: {
+        handleSearch() {
+            console.log("Форма отправлена")
+        }
+    },
+    components: {
+        BlueBtn,
+        TripCard
     }
 }
 </script>
@@ -327,6 +311,7 @@ export default {
     margin-bottom: 3rem;
     padding: 4rem 0px 2rem;
     border-radius: 0px 0px 2rem 2rem;
+    background: var(--gradient-surface);
 }
 .hero-section h1{
     font-size: 3.5rem;
@@ -334,35 +319,109 @@ export default {
     background-clip: text;
     margin-bottom: 1rem;
     line-height: 1.2;
-    color: #2563eb;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 .hero-section p{
-    color: #64748b;
+    color: var(--text-secondary);
     font-size: 1.25rem;
     max-width: 600px;
     margin: 0px auto 2rem;
 }
-.trip-card{
+.search-section{
+    background: var(--surface);
+    padding: 2rem;
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 3rem;
+}
+
+.search-header{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.search-header h2{
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+.search-header .filtersButton{
+    background: none;
+    border: 2px solid var(--border);
+    padding: 0.5rem 0.8rem;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.4s ease;
+}
+.search-header .filtersButton:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+.search-panel{
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+.search-panel .search-item{
     position: relative;
 }
-.trip-badge{
-    background: rgb(154, 220, 203);
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    color: white;
-    font-size: 0.8rem;
+.search-panel .search-item label{
+    display: block;
+    margin-bottom: 0.5rem;
     font-weight: 600;
-    z-index: 2;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
 }
-.trip-image{
-    width: 520px;
-    height: 250px;
-}
-.imgOfTravel{
+.search-panel .search-item input, select{
     width: 100%;
-    height: 100%;
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
 }
+.search-panel .search-item:nth-child(3) select{
+    padding: 1rem 0.5rem;
+}
+.popular-trips-section{
+    margin-bottom: 4rem;
+}
+.popular-trips-header{
+    display: flex; 
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+}
+.popular-trips-header h2{
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.popular-trips-header .link{
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.popular-trips-header .link span{
+    color: var(--primary);
+}
+.popular-trips-main{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 2rem;
+}
+
 </style>

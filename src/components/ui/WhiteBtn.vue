@@ -12,10 +12,9 @@ export default {
 
 <style>
 .white-btn{
-    box-sizing: border-box;
-    color: #2563eb;
-    background-image: white;
-    border: 2px solid #2563eb;
+    color: var(--primary);
+    background: transparent;
+    border: 2px solid var(--primary);
     padding: 0.75rem 1.5rem;
     border-radius: 14px;
     cursor: pointer;
