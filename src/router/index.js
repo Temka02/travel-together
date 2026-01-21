@@ -1,67 +1,59 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/authStore'
 import Home from '@/pages/Home.vue'
-import HealthCheck from '@/pages/HealthCheck.vue'
 import AuthLayout from '@/pages/AuthLayout.vue'
 import Login from '@/pages/Login.vue'
 import Register from '@/pages/Register.vue'
 import Profile from '@/pages/Profile.vue'
-import TripsLayout from '@/pages/TripsLayout.vue'
-import TripsList from '@/pages/TripsList.vue'
 import CreateTrip from '@/pages/CreateTrip.vue'
 import TripDetails from '@/pages/TripDetails.vue'
 import EditTrip from '@/pages/EditTrip.vue'
-import Applications from '@/pages/Applications.vue'
-import Calendar from '@/pages/Calendar.vue'
-import Chat from '@/pages/Chat.vue'
 import AllTrips from '@/pages/AllTrips.vue'
+import TripsLayout from '@/pages/TripsLayout.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
-  },
-  {
-    path: '/AllTrips',
-    name: 'AllTrips',
-    component: AllTrips
-  },
-  {
-    path: '/health',
-    name: 'Health',
-    component: HealthCheck
+    component: Home,
+    meta: { requiresAuth: false }
   },
   {
     path: '/auth',
     name: 'Auth',
     component: AuthLayout,
+    meta: { guestOnly: true },
     children: [
       {
         path: 'login',
         name: 'Login',
-        component: Login
+        component: Login,
+        meta: { guestOnly: true }
       },
       {
         path: 'register',
         name: 'Register',
-        component: Register
+        component: Register,
+        meta: { guestOnly: true }
       }
     ]
   },
   {
     path: '/profile',
     name: 'Profile',
-    component: Profile
+    component: Profile,
+    meta: { requiresAuth: true }
   },
   {
     path: '/trips',
     name: 'Trips',
     component: TripsLayout,
+    meta: { requiresAuth: true },
     children: [
       {
-        path: '',
-        name: 'TripsList',
-        component: TripsList
+        path: 'all-trips',
+        name: 'AllTrips',
+        component: AllTrips
       },
       {
         path: 'create',
@@ -79,27 +71,47 @@ const routes = [
         component: EditTrip
       }
     ]
-  },
-  {
-    path: '/applications',
-    name: 'Applications',
-    component: Applications
-  },
-  {
-    path: '/calendar',
-    name: 'Calendar',
-    component: Calendar
-  },
-  {
-    path: '/chat/:tripId',
-    name: 'Chat',
-    component: Chat
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
+})
+
+router.beforeEach(async (to, from, next) => {
+  const authStore = useAuthStore()
+  
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const guestOnly = to.matched.some(record => record.meta.guestOnly)
+  
+  if (requiresAuth && !authStore.isAuthenticated) {
+    next({ name: 'Login' })
+    return
+  }
+  
+  if (guestOnly && authStore.isAuthenticated) {
+    next({ name: 'Home' })
+    return
+  }
+  
+  if (authStore.accessToken && !authStore.user && requiresAuth) {
+    try {
+      await authStore.fetchCurrentUser()
+      next()
+    } catch (error) {
+      console.error('Failed to fetch user:', error)
+      authStore.clearAuthData()
+      next({ name: 'Login' })
+    }
+    return
+  }
+  
+  next()
+})
+
+router.onError((error) => {
+  console.error('Router error:', error)
 })
 
 export default router

@@ -7,24 +7,76 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+*/node_modules/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+*/dist/
+*/build/
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# OS generated files
 .DS_Store
-dist
-dist-ssr
-coverage
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Debug files
 *.local
 
+# Testing
 /cypress/videos/
 /cypress/screenshots/
+*.cy.*
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
+# TypeScript
 *.tsbuildinfo
+
+# Backend specific
+# MongoDB
+/data/
+/mongodb/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backend uploads (если есть загрузка файлов)
+/uploads/
+*/uploads/
+
+# Session files (если используете сессии)
+/sessions/
+
+# Temporary folders
+tmp/
+temp/

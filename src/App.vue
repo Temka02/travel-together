@@ -9,10 +9,23 @@
 
 <script>
 import Navigation from './components/layout/Navigation.vue'
+import { useAuthStore } from '@/stores/authStore';
+
 export default {
   name: 'App',
   components: {
     Navigation
+  },
+  async created() {
+    const authStore = useAuthStore();
+
+    if (authStore.accessToken && !authStore.user) {
+      try {
+        await authStore.fetchCurrentUser();
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    }
   }
 }
 </script>
@@ -48,6 +61,9 @@ export default {
     }
     
     .main-content .popular-trips-main{
+        grid-template-columns: 1fr;
+    }
+    .tab-content .about-grid {
         grid-template-columns: 1fr;
     }
 }

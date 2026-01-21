@@ -6,43 +6,39 @@
     <section class="search-section">
         <div class="search-header">
             <h2>Найдите своё путешествие</h2>
-            <button type="button" @click="showModal = true" class="filtersButton">Фильтры</button>
-            <div v-if="showModal" class="modal-filters">
-                <button type="button" @click="showModal = false">Закрыть</button>
-            </div>
         </div>
-        <form class="search-panel" @submit.prevent="handleSearch">
+        <form class="search-panel" @submit.prevent="handleSearch()">
             <div class="search-item">
                 <label for="direction">Куда хотите поехать?</label>
-                <input type="text" id="direction" placeholder="Например, Кавказ или Байкал" >
+                <input v-model="searchParams.direction" type="text" id="direction" placeholder="Например, Кавказ или Байкал" >
             </div>
             <div class="search-item">
                 <label for="date">Дата начала</label>
-                <input type="date" id="date">
+                <input v-model="searchParams.date" type="date" id="date">
             </div>
             <div class="search-item">
                 <label for="budget">Бюджет</label>
-                <select>
-                    <option checked>Любой бюджет</option>
+                <select v-model="searchParams.budget">
+                    <option value="">Любой бюджет</option>
                     <option value="low">До 20 000₽</option>
                     <option value="medium">20 000 - 50 000₽</option>
                     <option value="high">От 50 000₽</option>
                 </select>
             </div>
-            <BlueBtn type="submit" @click="handleSearch">Найти</BlueBtn>
+            <BlueBtn type="submit" @click="handleSearch" class="search-button">Найти</BlueBtn>
         </form>
     </section>
     <section class="popular-trips-section">
         <div class="popular-trips-header">
             <h2>Популярные путешествия</h2>
-            <router-link to="/allTrips" class="link">
+            <router-link to="/trips/all-trips" class="link">
                 <span>Все путешествия</span>
                 <span>→</span>
             </router-link>
         </div>
         <div class="popular-trips-main">
             <TripCard
-            v-for="trip in mostPopularTrips"
+            v-for="trip in mostPopularTrips.slice(0,4)"
             :key="trip.tripID"
             :trip="trip"
             />
@@ -52,250 +48,52 @@
 </template>
 
 <script>
+import { useTripStore } from '@/stores/tripStore';
 import BlueBtn from '@/components/ui/BlueBtn.vue';
 import TripCard from '@/components/ui/TripCard.vue'
+
 export default {
     name: 'Home',
     data(){
         return{
             showModal: false,
-            mostPopularTrips: [
-                {
-                    travelName: "Горный поход на Кавказ",
-                    travelDirection: "Кавказские горы",
-                    travelDate: "15-22 июля 2024",
-                    travelDuration: 1,
-                    travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    travelCurrentParticipants: 3,
-                    travelMaxParticipants: 6,
-                    travelParticipants: [
-                        {
-                            name: "Андрей"
-                        },
-                        {
-                            name: "Марина"
-                        },
-                        {
-                            name: "Савелий"
-                        }
-                    ],
-                    travelStats: "Средняя",
-                    travelPrice: "35 000",
-                    tripID: 1
-                },
-                {
-                    travelName: "Горный поход на Кавказ",
-                    travelDirection: "Кавказские горы",
-                    travelDate: "15-22 июля 2024",
-                    travelDuration: 2,
-                    travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    tavelpCurrentParticipants: 3,
-                    tavelpMaxParticipants: 6,
-                    travelParticipants: [
-                        {
-                            name: "Андрей"
-                        },
-                        {
-                            name: "Марина"
-                        },
-                        {
-                            name: "Савелий"
-                        }
-                    ],
-                    travelStats: "Средняя",
-                    travelPrice: "35 000",
-                    tripID: 2
-                },
-                {
-                    travelName: "Горный поход на Кавказ",
-                    travelDirection: "Кавказские горы",
-                    travelDate: "15-22 июля 2024",
-                    travelDuration: 3,
-                    travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    tavelpCurrentParticipants: 3,
-                    tavelpMaxParticipants: 6,
-                    travelParticipants: [
-                        {
-                            name: "Андрей"
-                        },
-                        {
-                            name: "Марина"
-                        },
-                        {
-                            name: "Савелий"
-                        }
-                    ],
-                    travelStats: "Средняя",
-                    travelPrice: "35 000",
-                    tripID: 3
-                },
-                {
-                    travelName: "Горный поход на Кавказ",
-                    travelDirection: "Кавказские горы",
-                    travelDate: "15-22 июля 2024",
-                    travelDuration: 4,
-                    travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    travelCurrentParticipants: 3,
-                    travelMaxParticipants: 6,
-                    travelParticipants: [
-                        {
-                            name: "Андрей"
-                        },
-                        {
-                            name: "Марина"
-                        },
-                        {
-                            name: "Савелий"
-                        }
-                    ],
-                    travelStats: "Средняя",
-                    travelPrice: "35 000",
-                    tripID: 4
-                },
-                {
-                    travelName: "Горный поход на Кавказ",
-                    travelDirection: "Кавказские горы",
-                    travelDate: "15-22 июля 2024",
-                    travelDuration: 5,
-                    travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    travelCurrentParticipants: 3,
-                    travelMaxParticipants: 6,
-                    travelParticipants: [
-                        {
-                            name: "Андрей"
-                        },
-                        {
-                            name: "Марина"
-                        },
-                        {
-                            name: "Савелий"
-                        }
-                    ],
-                    travelStats: "Средняя",
-                    travelPrice: "35 000",
-                    tripID: 5
-                },
-                {
-                    travelName: "Горный поход на Кавказ",
-                    travelDirection: "Кавказские горы",
-                    travelDate: "15-22 июля 2024",
-                    travelDuration: 6,
-                    travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    travelCurrentParticipants: 3,
-                    travelMaxParticipants: 6,
-                    travelParticipants: [
-                        {
-                            name: "Андрей"
-                        },
-                        {
-                            name: "Марина"
-                        },
-                        {
-                            name: "Савелий"
-                        }
-                    ],
-                    travelStats: "Средняя",
-                    travelPrice: "35 000",
-                    tripID: 6
-                },
-                {
-                    travelName: "Горный поход на Кавказ",
-                    travelDirection: "Кавказские горы",
-                    travelDate: "15-22 июля 2024",
-                    travelDuration: 7,
-                    travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    travelCurrentParticipants: 3,
-                    travelMaxParticipants: 6,
-                    travelParticipants: [
-                        {
-                            name: "Андрей"
-                        },
-                        {
-                            name: "Марина"
-                        },
-                        {
-                            name: "Савелий"
-                        }
-                    ],
-                    travelStats: "Средняя",
-                    travelPrice: "35 000",
-                    tripID: 7
-                },
-                {
-                    travelName: "Горный поход на Кавказ",
-                    travelDirection: "Кавказские горы",
-                    travelDate: "15-22 июля 2024",
-                    travelDuration: 8,
-                    travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    travelCurrentParticipants: 3,
-                    travelMaxParticipants: 6,
-                    travelParticipants: [
-                        {
-                            name: "Андрей"
-                        },
-                        {
-                            name: "Марина"
-                        },
-                        {
-                            name: "Савелий"
-                        }
-                    ],
-                    travelStats: "Средняя",
-                    travelPrice: "35 000",
-                    tripID: 8
-                },
-                {
-                    travelName: "Горный поход на Кавказ",
-                    travelDirection: "Кавказские горы",
-                    travelDate: "15-22 июля 2024",
-                    travelDuration: 9,
-                    travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    travelCurrentParticipants: 3,
-                    travelMaxParticipants: 6,
-                    travelParticipants: [
-                        {
-                            name: "Андрей"
-                        },
-                        {
-                            name: "Марина"
-                        },
-                        {
-                            name: "Савелий"
-                        }
-                    ],
-                    travelStats: "Средняя",
-                    travelPrice: "35 000",
-                    tripID: 9
-                },
-                {
-                    travelName: "Горный поход на Кавказ",
-                    travelDirection: "Кавказские горы",
-                    travelDate: "15-22 июля 2024",
-                    travelDuration: 10,
-                    travelDescription: "Недельный поход по живописным маршрутам Кавказа. Маршрут средней сложности, ночуем в палатках, готовим на костре.",
-                    travelCurrentParticipants: 3,
-                    travelMaxParticipants: 6,
-                    travelParticipants: [
-                        {
-                            name: "Андрей"
-                        },
-                        {
-                            name: "Марина"
-                        },
-                        {
-                            name: "Савелий"
-                        }
-                    ],
-                    travelStats: "Средняя",
-                    travelPrice: "35 000",
-                    tripID: 10
-                }
-            ]
+            searchParams: {
+                direction: '',
+                date: '',
+                budget: ''
+            }
         }
     },
     methods: {
         handleSearch() {
-            console.log("Форма отправлена")
+            console.log("Форма отправлена");
+            this.$router.push({
+                path: '/trips/all-trips',
+                query: this.cleanSearchParams(this.searchParams)
+            })
+        },
+        cleanSearchParams(params) {
+            const clean = {}
+            Object.keys(params).forEach(key => {
+                if (params[key]) {
+                clean[key] = params[key]
+                }
+            })
+            return clean
+        }
+    },
+    setup() {
+        const tripStore = useTripStore();
+        return { tripStore };
+    },
+    computed: {
+        mostPopularTrips() {
+            return this.tripStore.trips.slice(0, 4);
+        }
+    },
+    async mounted() {
+        if (this.tripStore.trips.length === 0) {
+            await this.tripStore.fetchTrips();
         }
     },
     components: {
@@ -311,6 +109,9 @@ export default {
     margin-bottom: 3rem;
     padding: 4rem 0px 2rem;
     border-radius: 0px 0px 2rem 2rem;
+    background: var(--gradient-surface);
+}
+.hero-section *{
     background: var(--gradient-surface);
 }
 .hero-section h1{
@@ -336,7 +137,9 @@ export default {
     box-shadow: var(--shadow);
     margin-bottom: 3rem;
 }
-
+.search-section *{
+    background: var(--surface);
+}
 .search-header{
     display: flex;
     justify-content: start;
@@ -391,6 +194,20 @@ export default {
 }
 .search-panel .search-item:nth-child(3) select{
     padding: 1rem 0.5rem;
+}
+.search-button{
+    max-width: 6rem;
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow);
 }
 .popular-trips-section{
     margin-bottom: 4rem;

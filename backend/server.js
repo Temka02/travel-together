@@ -1,31 +1,31 @@
-const express = require('express')
-const cors = require('cors')
+  const express = require('express');
+  const cors = require('cors');
+  const dotenv = require('dotenv');
+  const connectDB = require('./config/database');
 
-const app = express()
-const PORT = 3001
+  dotenv.config();
+  connectDB();
 
-app.use(cors())
-app.use(express.json())
+  const app = express();
 
-const authRoutes = require('./src/routes/auth')
-const usersRoutes = require('./src/routes/users')
-const tripsRoutes = require('./src/routes/trips')
-const applicationsRoutes = require('./src/routes/application')
+  app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+  }));
+  app.use(express.json());
 
-app.use('/api/auth', authRoutes)
-app.use('/api/users', usersRoutes)
-app.use('/api/trips', tripsRoutes)
-app.use('/api/applications', applicationsRoutes)
+  // Подключаем Swagger
+  require('./src/swagger')(app);
 
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    message: 'TravelTogether API is running'
-  })
-})
+  const authAccess = require('./src/middleware/authAccess');
 
-app.listen(PORT, () => {
-  console.log(`Server: http://localhost:${PORT}/api`)
-  console.log(`Health: http://localhost:${PORT}/api/health`)
-})
+  // В роутах теперь используем authAccess вместо auth
+  app.use('/api/auth', require('./src/routes/auth'));
+  app.use('/api/trips', authAccess, require('./src/routes/trips'));
+  app.use('/api/applications', authAccess, require('./src/routes/application'));
+
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+    console.log(`Swagger docs: http://localhost:${PORT}/api-docs`);
+  });

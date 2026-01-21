@@ -1,30 +1,29 @@
 <template>
     <div class="trip-card">
-        <router-link :to="`/trips/${trip.id}`" class="cardLink">
-            <div class="trip-badge">Популярное</div>
+        <router-link :to="`/trips/${trip._id}`" class="cardLink">
             <div class="trip-image">
                 <img src="@/assets/baikal.jpg" alt="" class="imgOfTravel">
             </div>
             <div class="trip-content">
                 <div class="trip-header">
-                    <h3>{{ trip.travelName }}</h3>
-                    <div class="trip-price">{{ trip.travelPrice }}₽</div>
+                    <h3>{{ trip.title}}</h3>
+                    <div class="trip-price">{{ trip.price }}₽</div>
                 </div>
                 <div class="trip-main">
                     <div class="trip-main-item">
                         <span>📍</span>
-                        <span>{{ trip.travelDirection }}</span>
+                        <span>{{ trip.destination }}</span>
                     </div>
                     <div class="trip-main-item">
                         <span>📅</span>
-                        <span>{{ trip.travelDate }}</span>
+                        <span>{{ trip.startDate.slice(0,10) }}</span>
                     </div>
                     <div class="trip-main-item">
                         <span>⏱️</span>
-                        <span>{{ trip.travelDuration }} дней</span>
+                        <span>{{ trip.durationDays }} дней</span>
                     </div>
                 </div>
-                <span class="trip-description">{{ trip.travelDescription }}</span>
+                <span class="trip-description">{{ trip.description }}</span>
                 <div class="trip-footer">
                     <div class="trip-participants">
                         <div class="avatar-group">
@@ -33,10 +32,10 @@
                             </div>
                         </div>
                         
-                        <span>{{ trip.travelCurrentParticipants }}/{{ trip.travelMaxParticipants }} участников</span>
+                        <span>{{ trip.currentParticipants }}/{{ trip.maxParticipants }} участников</span>
                     </div>
-                    <div class="trip-stats medium">
-                        <span>{{ trip.travelStats }}</span>
+                    <div class="trip-stats" :class="trip.difficulty">
+                        <span>{{ trip.difficulty }}</span>
                     </div>
                 </div>
             </div>
@@ -52,7 +51,7 @@ export default {
             type: Object,
             required: true
         }
-    }
+    },
 }
 </script>
 
@@ -171,7 +170,7 @@ export default {
     border: 2px solid var(--surface);
     margin-left: -8px;
 }
-.trip-stats{
+.trip-card .trip-stats{
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 12px;
@@ -187,7 +186,7 @@ export default {
 .hard{
     background: var(--extra);
 }
-.trip-stats span{
+.trip-card .trip-stats span{
     background: inherit;
     color: inherit;
 }

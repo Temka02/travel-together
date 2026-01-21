@@ -2,17 +2,21 @@
     <nav class="nav-panel">
         <div class="nav-content">
             <div class="logo-panel">
-                <router-link to="/" class="logo">TravelTogether</router-link>
+                <router-link to="/trips/all-trips" class="logo">TravelTogether</router-link>
             </div>
-            <div class="auth-btns">
-                <BlueBtn>Войти</BlueBtn>
-                <WhiteBtn>Регистрация</WhiteBtn>
+            <div class="auth-btns" v-if="!isAuthenticated">
+                <router-link to="/auth/login"><BlueBtn>Войти</BlueBtn></router-link>
+                <router-link to="/auth/register"><WhiteBtn>Регистрация</WhiteBtn></router-link>
+            </div>
+            <div class="auth-btns" v-else>
+                <router-link to="/profile" class="profile-btn"><WhiteBtn>Профиль</WhiteBtn></router-link>
             </div>
         </div>
     </nav>
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/authStore';
 import BlueBtn from '../ui/BlueBtn.vue'
 import WhiteBtn from '../ui/WhiteBtn.vue'
 export default {
@@ -20,6 +24,22 @@ export default {
     components: {
         BlueBtn,
         WhiteBtn
+    },
+    computed: {
+        isAuthenticated() {
+        const authStore = useAuthStore();
+        return authStore.isAuthenticated;
+        }
+    },
+    methods: {
+        async loadInitialData() {
+            if (this.isAuthenticated) {
+                await authStore.fetchCurrentUser();
+            }
+        },
+        async created() {
+            await this.loadInitialData();
+        }
     }
 }
 </script>
@@ -40,7 +60,6 @@ export default {
     font-size: 1.5rem;
 }
 .nav-panel{
-    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border);
     padding: 1rem 0;
@@ -56,6 +75,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-radius: 8px;
 }
 .auth-btns{
     display: flex;
